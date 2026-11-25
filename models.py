@@ -1,5 +1,6 @@
 from datetime import date, datetime, timezone
 from enum import Enum
+from pydantic import EmailStr
 
 from sqlmodel import Field, SQLModel
 
@@ -19,9 +20,10 @@ class AssignmentBase(SQLModel):
 
 #the actual database model
 
-class Assignment(AssignmentBase,table=True):
-    id:int | None =Field(default=None,primary_key=True)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+class Assignment(AssignmentBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    created_at: datetime = Field(default_factory=datetime.now)
+    owner_id: int | None = Field(default=None, foreign_key="user.id", index=True)
     
 # What the user sends to CREATE an assignment
 class AssignmentCreate(AssignmentBase):
@@ -41,3 +43,34 @@ class AssignmentUpdate(SQLModel):
     due_date: date | None = None
     status: Status | None = None
     notes: str | None = None
+
+# ---------- USERS ----------
+
+class UserBase(SQLModel):
+    email: EmailStr = Field(unique=True, index=True, max_length=255)
+    full_name: str = Field(min_length=1, max_length=100)
+
+
+# The database table
+class User(UserBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    hashed_password: str
+    created_at: datetime = Field(default_factory=datetime.now)
+
+
+# What the user sends to SIGN UP
+class UserCreate(UserBase):
+    password: str = Field(min_length=8, max_length=72)
+
+
+# What the API RETURNS about a user (never the password!)
+class UserPublic(UserBase):
+    id: int
+    created_at: datetime
+
+
+# What the API returns after LOGIN
+class Token(SQLModel):
+    access_token: str
+    token_type: str = "bearer"
+    
