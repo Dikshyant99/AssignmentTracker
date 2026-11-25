@@ -4,10 +4,10 @@ from enum import Enum
 from sqlmodel import Field, SQLModel
 
 #The only allowed values for status
-class status(str,Enum):
-    pending="pending",
-    in_progress="in_progress",
-    done="done"
+class Status(str, Enum):
+    pending = "pending"
+    in_progress = "in_progress"
+    done = "done"
 
 #Users info
 class AssignmentBase(SQLModel):
