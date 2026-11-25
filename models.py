@@ -1,4 +1,4 @@
-from datetime import date , datetime
+from datetime import date, datetime, timezone
 from enum import Enum
 
 from sqlmodel import Field, SQLModel
@@ -21,4 +21,23 @@ class AssignmentBase(SQLModel):
 
 class Assignment(AssignmentBase,table=True):
     id:int | None =Field(default=None,primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+# What the user sends to CREATE an assignment
+class AssignmentCreate(AssignmentBase):
+    pass
+
+
+# What the API RETURNS (includes database-generated fields)
+class AssignmentPublic(AssignmentBase):
+    id: int
+    created_at: datetime
+
+
+# What the user sends to UPDATE (every field optional)
+class AssignmentUpdate(SQLModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    subject: str | None = Field(default=None, max_length=100)
+    due_date: date | None = None
+    status: Status | None = None
+    notes: str | None = None
