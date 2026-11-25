@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -146,4 +147,6 @@ def delete_assignment(assignment_id: int, session: SessionDep, current_user: Cur
 
 
 # ---------- FRONTEND: serve the HTML/CSS/JS files at /app ----------
-app.mount("/app", StaticFiles(directory="frontend", html=True), name="frontend")
+# frontend/ sits next to backend/ in the project root
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

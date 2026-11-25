@@ -46,9 +46,21 @@ An `Assignment` has:
 
 ```
 .
-├── main.py              # FastAPI app
-├── models.py            # SQLModel models
-├── requirements.txt
-├── Dockerfile
-└── docker-compose.yml
+├── backend/
+│   ├── main.py           # FastAPI app and routes
+│   ├── auth.py           # Password hashing and JWT auth
+│   ├── models.py         # SQLModel models
+│   ├── database.py       # Engine and session setup
+│   ├── requirements.txt
+│   └── Dockerfile
+├── frontend/
+│   ├── index.html
+│   ├── signup.html
+│   ├── home.html
+│   ├── api.js
+│   └── style.css
+├── docker-compose.yml
+└── .env
 ```
+
+To run the backend without Docker: `cd backend && fastapi dev main.py`
