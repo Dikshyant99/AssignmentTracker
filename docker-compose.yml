@@ -18,6 +18,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     container_name: assignment_api
+    working_dir: /app/backend
     env_file: .env
     environment:
       - WATCHFILES_FORCE_POLLING=true
