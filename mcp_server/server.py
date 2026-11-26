@@ -20,7 +20,7 @@ def get_today()-> str:
     """Get today's date (YYYY-MM-DD). Use this to work out what is due soon or overdue."""
     return date.today().isoformat()
 @mcp.tool()
-def list_assignment(status: Status | None = None) -> list[dict]:
+def list_assignments(status: Status | None = None) -> list[dict]:
     """List the user's assignments, sorted by due date (soonest first).
 
     Args:
@@ -31,10 +31,9 @@ def list_assignment(status: Status | None = None) -> list[dict]:
         assignments = [a for a in assignments if a["status"] == status]
     return assignments
 @mcp.tool()
-def get_assignment(assignment_id:int)->dict:
-     """Get the full details of one assignment by its id."""
-
-     return api.request("GET", f"/assignments/{assignment_id}")
+def get_assignment(assignment_id: int) -> dict:
+    """Get the full details of one assignment by its id."""
+    return api.request("GET", f"/assignments/{assignment_id}")
 
 @mcp.tool()
 def create_assignment(
