@@ -67,12 +67,17 @@ def update_assignment(
     due_date: date | None = None,
     status: Status | None = None,
     notes: str | None = None,
+    clear_notes: bool = False,
 ) -> dict:
     """Update an existing assignment. Only pass the fields that should change.
 
     For example, to mark assignment 3 as done, pass assignment_id=3 and status="done".
     If you don't know the id, call list_assignments first to find it.
+    To remove the notes entirely, pass clear_notes=True (and leave notes empty).
     """
+    if clear_notes and notes is not None:
+        raise ValueError("Pass either notes or clear_notes=True, not both.")
+
     changes = {
         "title": title,
         "subject": subject,
@@ -83,6 +88,9 @@ def update_assignment(
 
 # Keep only the fields that were actually given
     changes = {key: value for key, value in changes.items() if value is not None}
+    if clear_notes:
+        changes["notes"] = None  # explicit null tells the API to clear it
+
     if not changes:
         raise ValueError("Nothing to update - pass at least one field to change.")
 
