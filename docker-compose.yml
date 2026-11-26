@@ -14,8 +14,11 @@ services:
       retries: 5
 
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: assignment_api
+    working_dir: /app/backend
     env_file: .env
     environment:
       - WATCHFILES_FORCE_POLLING=true
@@ -25,7 +28,8 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/app
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
     command: fastapi dev main.py --host 0.0.0.0 --port 8000
 
 volumes:

@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -14,6 +15,7 @@ from models import (
     AssignmentCreate,
     AssignmentPublic,
     AssignmentUpdate,
+    Status,
     Token,
     User,
     UserCreate,
@@ -104,14 +106,12 @@ def list_assignments(
     current_user: CurrentUser,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
+    status: Status | None = None,
 ):
-    statement = (
-        select(Assignment)
-        .where(Assignment.owner_id == current_user.id)
-        .order_by(Assignment.due_date)
-        .offset(offset)
-        .limit(limit)
-    )
+    statement = select(Assignment).where(Assignment.owner_id == current_user.id)
+    if status is not None:
+        statement = statement.where(Assignment.status == status)
+    statement = statement.order_by(Assignment.due_date).offset(offset).limit(limit)
     return session.exec(statement).all()
 
 
@@ -146,4 +146,6 @@ def delete_assignment(assignment_id: int, session: SessionDep, current_user: Cur
 
 
 # ---------- FRONTEND: serve the HTML/CSS/JS files at /app ----------
-app.mount("/app", StaticFiles(directory="frontend", html=True), name="frontend")
+# frontend/ sits next to backend/ in the project root
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

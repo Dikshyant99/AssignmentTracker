@@ -22,7 +22,7 @@ class AssignmentBase(SQLModel):
 
 class Assignment(AssignmentBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     owner_id: int | None = Field(default=None, foreign_key="user.id", index=True)
     
 # What the user sends to CREATE an assignment
@@ -55,7 +55,7 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
-    created_at: datetime = Field(default_factory=datetime.now)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # What the user sends to SIGN UP
