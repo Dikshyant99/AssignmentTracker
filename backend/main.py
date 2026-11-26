@@ -15,6 +15,7 @@ from models import (
     AssignmentCreate,
     AssignmentPublic,
     AssignmentUpdate,
+    Status,
     Token,
     User,
     UserCreate,
@@ -105,14 +106,12 @@ def list_assignments(
     current_user: CurrentUser,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
+    status: Status | None = None,
 ):
-    statement = (
-        select(Assignment)
-        .where(Assignment.owner_id == current_user.id)
-        .order_by(Assignment.due_date)
-        .offset(offset)
-        .limit(limit)
-    )
+    statement = select(Assignment).where(Assignment.owner_id == current_user.id)
+    if status is not None:
+        statement = statement.where(Assignment.status == status)
+    statement = statement.order_by(Assignment.due_date).offset(offset).limit(limit)
     return session.exec(statement).all()
 
 

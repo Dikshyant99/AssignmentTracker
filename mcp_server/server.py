@@ -26,10 +26,8 @@ def list_assignments(status: Status | None = None) -> list[dict]:
     Args:
         status: Optional filter - "pending", "in_progress" or "done". Leave empty to get all.
     """
-    assignments = api.request("GET", "/assignments")
-    if status:
-        assignments = [a for a in assignments if a["status"] == status]
-    return assignments
+    params = {"status": status} if status else None
+    return api.request("GET", "/assignments", params=params)
 @mcp.tool()
 def get_assignment(assignment_id: int) -> dict:
     """Get the full details of one assignment by its id."""
